@@ -1,6 +1,9 @@
 {
-    "buildCommand": "npm run build --workspaces",
+    "buildCommand": "npm install && npm run build:full",
     "outputDirectory": "frontend/dist",
+    "env": {
+        "DATABASE_URL": "@database_url"
+    },
     "rewrites": [
         {
             "source": "/graphql",
