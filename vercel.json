@@ -1,23 +1,14 @@
 {
+    "buildCommand": "npm run build --workspaces",
+    "outputDirectory": "frontend/dist",
     "rewrites": [
         {
             "source": "/graphql",
-            "destination": "/api/index"
+            "destination": "/api"
         },
         {
             "source": "/api/(.*)",
-            "destination": "/api/index"
-        },
-        {
-            "source": "/(.*)",
-            "destination": "/frontend/$1"
+            "destination": "/api"
         }
-    ],
-    "buildCommand": "npm run build --workspaces",
-    "outputDirectory": "frontend/dist",
-    "functions": {
-        "api/**/*.ts": {
-            "runtime": "nodejs18.x"
-        }
-    }
+    ]
 }
