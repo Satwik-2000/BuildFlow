@@ -1,8 +1,15 @@
 {
-    "buildCommand": "npm install && npm run build:full",
+    "installCommand": "npm install --legacy-peer-deps",
+    "buildCommand": "npm run build:backend && cd frontend && npm run build && cd ..",
     "outputDirectory": "frontend/dist",
+    "regions": ["iad1"],
     "env": {
         "DATABASE_URL": "@database_url"
+    },
+    "git": {
+        "deploymentEnabled": {
+            "main": true
+        }
     },
     "rewrites": [
         {
