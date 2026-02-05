@@ -32,19 +32,22 @@ export default {
           name: input.name as string,
           description: input.description as string | undefined,
           dueDate: input.dueDate ? new Date(input.dueDate as string) : undefined,
-          amount: input.amount != null ? input.amount : undefined,
-          percentage: input.percentage != null ? input.percentage : undefined,
+          amount: input.amount != null ? Number(input.amount) : undefined,
+          percentage: input.percentage != null ? Number(input.percentage) : undefined,
         },
         include: { project: true, contract: true },
       });
     },
     updateMilestone: async (_: unknown, { id, input }: { id: string; input: Record<string, unknown> }, ctx: GraphQLContext) => {
       requireAuth(ctx);
-      const data: Record<string, unknown> = { ...input };
-      if (input.dueDate) data.dueDate = new Date(input.dueDate as string);
-      if (input.completedAt) data.completedAt = new Date(input.completedAt as string);
-      if (input.amount != null) data.amount = input.amount;
-      if (input.percentage != null) data.percentage = input.percentage;
+      const data: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(input)) {
+        if (key === 'dueDate' && value) data.dueDate = new Date(value as string);
+        else if (key === 'completedAt' && value) data.completedAt = new Date(value as string);
+        else if (key === 'amount' && value != null) data.amount = Number(value);
+        else if (key === 'percentage' && value != null) data.percentage = Number(value);
+        else if (value !== undefined) data[key] = value;
+      }
       return ctx.prisma.milestone.update({
         where: { id },
         data,

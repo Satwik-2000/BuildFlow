@@ -32,15 +32,19 @@ export default {
           location: input.location as string | undefined,
           startDate: input.startDate ? new Date(input.startDate as string) : undefined,
           endDate: input.endDate ? new Date(input.endDate as string) : undefined,
-          budget: input.budget != null ? input.budget : undefined,
+          budget: input.budget != null ? Number(input.budget) : undefined,
         },
       });
     },
     updateProject: async (_: unknown, { id, input }: { id: string; input: Record<string, unknown> }, ctx: GraphQLContext) => {
       requireAuth(ctx);
-      const data: Record<string, unknown> = { ...input };
-      if (input.startDate) data.startDate = new Date(input.startDate as string);
-      if (input.endDate) data.endDate = new Date(input.endDate as string);
+      const data: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(input)) {
+        if (key === 'startDate' && value) data.startDate = new Date(value as string);
+        else if (key === 'endDate' && value) data.endDate = new Date(value as string);
+        else if (key === 'budget' && value != null) data.budget = Number(value);
+        else if (value !== undefined) data[key] = value;
+      }
       return ctx.prisma.project.update({
         where: { id },
         data,

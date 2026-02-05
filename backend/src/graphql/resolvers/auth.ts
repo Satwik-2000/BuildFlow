@@ -58,9 +58,14 @@ export default {
     },
     updateUser: async (_: unknown, { id, input }: { id: string; input: { name?: string; role?: string; phone?: string; isActive?: boolean } }, ctx: GraphQLContext) => {
       requireAuth(ctx);
+      const data: Record<string, unknown> = {};
+      if (input.name !== undefined) data.name = input.name;
+      if (input.phone !== undefined) data.phone = input.phone;
+      if (input.isActive !== undefined) data.isActive = input.isActive;
+      if (input.role !== undefined) data.role = input.role as "ADMIN" | "MANAGER" | "ENGINEER" | "VIEWER";
       return ctx.prisma.user.update({
         where: { id },
-        data: input,
+        data,
         select: { id: true, email: true, name: true, role: true, phone: true, avatarUrl: true, isActive: true, createdAt: true },
       });
     },
