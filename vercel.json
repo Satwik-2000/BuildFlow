@@ -1,8 +1,14 @@
 {
     "installCommand": "npm install --legacy-peer-deps",
-    "buildCommand": "npm run build:backend && cd frontend && npm run build && cd ..",
+    "buildCommand": "npm run build:backend && cd frontend && npm run build",
     "outputDirectory": "frontend/dist",
     "regions": ["iad1"],
+    "functions": {
+        "api/**/*.ts": {
+            "runtime": "nodejs18.x",
+            "includeFiles": "backend/dist/**"
+        }
+    },
     "env": {
         "DATABASE_URL": "@database_url"
     },
