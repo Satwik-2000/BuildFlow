@@ -2,17 +2,22 @@
     "rewrites": [
         {
             "source": "/graphql",
-            "destination": "/api/index.ts"
+            "destination": "/api/index"
         },
         {
             "source": "/api/(.*)",
-            "destination": "/api/index.ts"
+            "destination": "/api/index"
         },
         {
             "source": "/(.*)",
             "destination": "/frontend/$1"
         }
     ],
-    "framework": "vite",
-    "buildCommand": "npm run build --workspaces"
+    "buildCommand": "npm run build --workspaces",
+    "outputDirectory": "frontend/dist",
+    "functions": {
+        "api/**/*.ts": {
+            "runtime": "nodejs18.x"
+        }
+    }
 }
