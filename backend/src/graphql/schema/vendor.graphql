@@ -1,0 +1,47 @@
+type Vendor {
+  id: ID!
+  name: String!
+  code: String
+  type: String!
+  contactPerson: String
+  email: String
+  phone: String
+  address: String
+  taxId: String
+  isActive: Boolean!
+  createdAt: DateTime!
+}
+
+input CreateVendorInput {
+  name: String!
+  code: String
+  type: String!
+  contactPerson: String
+  email: String
+  phone: String
+  address: String
+  taxId: String
+}
+
+input UpdateVendorInput {
+  name: String
+  code: String
+  type: String
+  contactPerson: String
+  email: String
+  phone: String
+  address: String
+  taxId: String
+  isActive: Boolean
+}
+
+extend type Query {
+  vendors(search: String, type: String): [Vendor!]!
+  vendor(id: ID!): Vendor
+}
+
+extend type Mutation {
+  createVendor(input: CreateVendorInput!): Vendor!
+  updateVendor(id: ID!, input: UpdateVendorInput!): Vendor!
+  deleteVendor(id: ID!): Vendor!
+}

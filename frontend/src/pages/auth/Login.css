@@ -1,0 +1,123 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f7fa;
+  position: relative;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+}
+
+.login-card {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+}
+
+.login-card-header {
+  text-align: center;
+  padding: 40px 24px 32px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.login-logo {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1677ff 0%, #0958d9 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(22, 119, 255, 0.2);
+}
+
+.login-logo img {
+  width: 56px;
+  height: 56px;
+}
+
+.login-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+  letter-spacing: -0.3px;
+}
+
+.login-subtitle {
+  font-size: 14px;
+  margin: 0;
+  color: #666;
+  font-weight: 400;
+}
+
+.login-card .ant-card-head {
+  display: none;
+}
+
+.login-card .ant-card-body {
+  padding: 32px 24px 24px;
+}
+
+.login-form .ant-form-item-label > label {
+  font-weight: 500;
+  color: #1a1a1a;
+  font-size: 14px;
+}
+
+.login-form .ant-input,
+.login-form .ant-input-password {
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  transition: all 0.2s ease;
+  height: 40px;
+}
+
+.login-form .ant-input:hover,
+.login-form .ant-input-password:hover {
+  border-color: #1677ff;
+}
+
+.login-form .ant-input:focus,
+.login-form .ant-input-password:focus,
+.login-form .ant-input-focused,
+.login-form .ant-input-password-focused {
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
+}
+
+.login-form .ant-btn-primary {
+  border-radius: 6px;
+  height: 40px;
+  font-weight: 500;
+  background: #1677ff;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.login-form .ant-btn-primary:hover {
+  background: #4096ff;
+}
+
+.login-hint {
+  text-align: center;
+  color: #8c8c8c;
+  font-size: 12px;
+  margin-top: 20px;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.login-hint strong {
+  color: #1677ff;
+  font-weight: 500;
+}

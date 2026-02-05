@@ -1,0 +1,48 @@
+type Contract {
+  id: ID!
+  projectId: ID!
+  vendorId: ID!
+  contractNo: String!
+  title: String!
+  value: Decimal!
+  startDate: DateTime!
+  endDate: DateTime
+  description: String
+  status: String!
+  project: Project
+  vendor: Vendor
+  milestones: [Milestone!]
+  raBills: [RABill!]
+  createdAt: DateTime!
+}
+
+input CreateContractInput {
+  projectId: ID!
+  vendorId: ID!
+  contractNo: String!
+  title: String!
+  value: Float!
+  startDate: DateTime!
+  endDate: DateTime
+  description: String
+}
+
+input UpdateContractInput {
+  title: String
+  value: Float
+  startDate: DateTime
+  endDate: DateTime
+  description: String
+  status: String
+}
+
+extend type Query {
+  contracts(projectId: ID, vendorId: ID): [Contract!]!
+  contract(id: ID!): Contract
+}
+
+extend type Mutation {
+  createContract(input: CreateContractInput!): Contract!
+  updateContract(id: ID!, input: UpdateContractInput!): Contract!
+  deleteContract(id: ID!): Contract!
+}

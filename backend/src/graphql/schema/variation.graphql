@@ -1,0 +1,43 @@
+enum VariationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+type Variation {
+  id: ID!
+  projectId: ID!
+  contractId: ID!
+  refNo: String!
+  title: String!
+  description: String!
+  amount: Decimal!
+  status: VariationStatus!
+  approvedAt: DateTime
+  project: Project
+  contract: Contract
+  createdAt: DateTime!
+}
+
+input CreateVariationInput {
+  projectId: ID!
+  contractId: ID!
+  refNo: String!
+  title: String!
+  description: String!
+  amount: Float!
+}
+
+input UpdateVariationInput {
+  status: VariationStatus
+}
+
+extend type Query {
+  variations(projectId: ID, contractId: ID, status: VariationStatus): [Variation!]!
+  variation(id: ID!): Variation
+}
+
+extend type Mutation {
+  createVariation(input: CreateVariationInput!): Variation!
+  updateVariation(id: ID!, input: UpdateVariationInput!): Variation!
+}

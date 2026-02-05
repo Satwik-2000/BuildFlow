@@ -1,0 +1,46 @@
+type Milestone {
+  id: ID!
+  projectId: ID!
+  contractId: ID
+  name: String!
+  description: String
+  dueDate: DateTime
+  amount: Decimal
+  percentage: Decimal
+  status: String!
+  completedAt: DateTime
+  createdAt: DateTime!
+  project: Project
+  contract: Contract
+}
+
+input CreateMilestoneInput {
+  projectId: ID!
+  contractId: ID
+  name: String!
+  description: String
+  dueDate: DateTime
+  amount: Float
+  percentage: Float
+}
+
+input UpdateMilestoneInput {
+  name: String
+  description: String
+  dueDate: DateTime
+  amount: Float
+  percentage: Float
+  status: String
+  completedAt: DateTime
+}
+
+extend type Query {
+  milestones(projectId: ID, contractId: ID): [Milestone!]!
+  milestone(id: ID!): Milestone
+}
+
+extend type Mutation {
+  createMilestone(input: CreateMilestoneInput!): Milestone!
+  updateMilestone(id: ID!, input: UpdateMilestoneInput!): Milestone!
+  deleteMilestone(id: ID!): Milestone!
+}

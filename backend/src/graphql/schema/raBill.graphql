@@ -1,0 +1,71 @@
+enum BillStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  PAID
+}
+
+type BillItem {
+  id: ID!
+  boqRef: String!
+  description: String!
+  quantity: Decimal!
+  unit: String!
+  rate: Decimal!
+  amount: Decimal!
+  previousQty: Decimal
+  currentQty: Decimal
+}
+
+type RABill {
+  id: ID!
+  projectId: ID!
+  contractId: ID!
+  billNo: String!
+  periodFrom: DateTime!
+  periodTo: DateTime!
+  totalAmount: Decimal
+  status: BillStatus!
+  items: [BillItem!]!
+  project: Project
+  contract: Contract
+  createdAt: DateTime!
+}
+
+input CreateRABillInput {
+  projectId: ID!
+  contractId: ID!
+  billNo: String!
+  periodFrom: DateTime!
+  periodTo: DateTime!
+  totalAmount: Decimal
+}
+
+input BillItemInput {
+  boqRef: String!
+  description: String!
+  quantity: Float!
+  unit: String!
+  rate: Float!
+  previousQty: Float
+  currentQty: Float
+}
+
+input UpdateRABillInput {
+  periodFrom: DateTime
+  periodTo: DateTime
+  status: BillStatus
+}
+
+extend type Query {
+  raBills(projectId: ID, contractId: ID, status: BillStatus): [RABill!]!
+  raBill(id: ID!): RABill
+}
+
+extend type Mutation {
+  createRABill(input: CreateRABillInput!): RABill!
+  updateRABill(id: ID!, input: UpdateRABillInput!): RABill!
+  addBillItems(raBillId: ID!, items: [BillItemInput!]!): RABill!
+}

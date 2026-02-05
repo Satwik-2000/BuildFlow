@@ -1,0 +1,38 @@
+type Document {
+  id: ID!
+  projectId: ID!
+  title: String!
+  category: String
+  fileUrl: String!
+  fileName: String!
+  fileSize: Int
+  mimeType: String
+  version: Int!
+  createdAt: DateTime!
+}
+
+input CreateDocumentInput {
+  projectId: ID!
+  title: String!
+  category: String
+  fileUrl: String!
+  fileName: String!
+  fileSize: Int
+  mimeType: String
+}
+
+input UpdateDocumentInput {
+  title: String
+  category: String
+}
+
+extend type Query {
+  documents(projectId: ID!, category: String): [Document!]!
+  document(id: ID!): Document
+}
+
+extend type Mutation {
+  createDocument(input: CreateDocumentInput!): Document!
+  updateDocument(id: ID!, input: UpdateDocumentInput!): Document!
+  deleteDocument(id: ID!): Document!
+}

@@ -1,0 +1,44 @@
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+type Payment {
+  id: ID!
+  raBillId: ID
+  amount: Decimal!
+  paymentDate: DateTime!
+  referenceNo: String
+  status: PaymentStatus!
+  notes: String
+  createdAt: DateTime!
+}
+
+input CreatePaymentInput {
+  raBillId: ID
+  amount: Float!
+  paymentDate: DateTime!
+  referenceNo: String
+  notes: String
+}
+
+input UpdatePaymentInput {
+  amount: Float
+  paymentDate: DateTime
+  referenceNo: String
+  status: PaymentStatus
+  notes: String
+}
+
+extend type Query {
+  payments(raBillId: ID): [Payment!]!
+  payment(id: ID!): Payment
+}
+
+extend type Mutation {
+  createPayment(input: CreatePaymentInput!): Payment!
+  updatePayment(id: ID!, input: UpdatePaymentInput!): Payment!
+}

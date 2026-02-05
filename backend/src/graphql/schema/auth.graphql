@@ -1,0 +1,54 @@
+enum Role {
+  ADMIN
+  MANAGER
+  ENGINEER
+  VIEWER
+}
+
+type User {
+  id: ID!
+  email: String!
+  name: String!
+  role: Role!
+  phone: String
+  avatarUrl: String
+  isActive: Boolean!
+  createdAt: DateTime!
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  name: String!
+  role: Role
+  phone: String
+}
+
+input UpdateUserInput {
+  name: String
+  role: Role
+  phone: String
+  isActive: Boolean
+}
+
+extend type Query {
+  me: User
+  users: [User!]!
+  user(id: ID!): User
+}
+
+extend type Mutation {
+  login(input: LoginInput!): AuthPayload!
+  createUser(input: CreateUserInput!): User!
+  updateUser(id: ID!, input: UpdateUserInput!): User!
+}

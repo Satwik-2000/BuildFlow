@@ -1,0 +1,21 @@
+type DashboardStats {
+  totalProjects: Int!
+  activeContracts: Int!
+  pendingBills: Int!
+  overduePayments: Int!
+  recentReports: Int!
+}
+
+type ProjectSummary {
+  id: ID!
+  name: String!
+  code: String!
+  status: String!
+  budget: Decimal
+  progress: Float
+}
+
+extend type Query {
+  dashboardStats: DashboardStats!
+  projectSummaries: [ProjectSummary!]!
+}

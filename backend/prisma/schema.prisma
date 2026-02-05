@@ -1,0 +1,291 @@
+// BuildFlow Construction Contract Management - Database Schema (Prisma 7)
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  ENGINEER
+  VIEWER
+}
+
+enum BillStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  PAID
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum VariationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  ALERT
+  SUCCESS
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  name          String
+  role          Role      @default(ENGINEER)
+  phone         String?
+  avatarUrl     String?   @map("avatar_url")
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  projects          ProjectUser[]
+  notifications     Notification[]
+  createdReports    DailyReport[]    @relation("ReportCreator")
+  approvedVariations Variation[]     @relation("VariationApprover")
+}
+
+model ProjectUser {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  projectId String   @map("project_id")
+  role      String   @default("member")
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, projectId])
+  @@map("project_users")
+}
+
+model Project {
+  id          String    @id @default(cuid())
+  name        String
+  code        String    @unique
+  description String?
+  location    String?
+  startDate   DateTime? @map("start_date")
+  endDate     DateTime? @map("end_date")
+  budget      Decimal?  @db.Decimal(15, 2)
+  status      String    @default("active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  
+  users       ProjectUser[]
+  contracts   Contract[]
+  dailyReports DailyReport[]
+  raBills     RABill[]
+  variations  Variation[]
+  documents   Document[]
+  milestones  Milestone[]
+}
+
+model Contract {
+  id            String    @id @default(cuid())
+  projectId     String    @map("project_id")
+  vendorId      String    @map("vendor_id")
+  contractNo    String    @unique @map("contract_no")
+  title         String
+  value         Decimal   @db.Decimal(15, 2)
+  startDate     DateTime  @map("start_date")
+  endDate       DateTime? @map("end_date")
+  description   String?
+  status        String    @default("active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  vendor    Vendor     @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  milestones Milestone[]
+  raBills   RABill[]
+  variations Variation[]
+}
+
+model Vendor {
+  id          String    @id @default(cuid())
+  name        String
+  code        String?   @unique
+  type        String    // contractor, supplier, consultant
+  contactPerson String? @map("contact_person")
+  email       String?
+  phone       String?
+  address     String?
+  taxId       String?   @map("tax_id")
+  bankDetails String?   @map("bank_details") @db.Text
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  
+  contracts Contract[]
+}
+
+model Milestone {
+  id          String    @id @default(cuid())
+  projectId   String    @map("project_id")
+  contractId  String?   @map("contract_id")
+  name        String
+  description String?
+  dueDate     DateTime? @map("due_date")
+  amount      Decimal?  @db.Decimal(15, 2)
+  percentage  Decimal?  @db.Decimal(5, 2)
+  status      String    @default("pending")
+  completedAt DateTime? @map("completed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  
+  project  Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  contract Contract? @relation(fields: [contractId], references: [id], onDelete: SetNull)
+}
+
+model DailyReport {
+  id          String    @id @default(cuid())
+  projectId   String    @map("project_id")
+  createdById String    @map("created_by_id")
+  reportDate  DateTime  @map("report_date") @db.Date
+  weather     String?
+  workDone    String    @map("work_done") @db.Text
+  manpower    Int?      @default(0)
+  equipment   String?   @db.Text
+  issues      String?   @db.Text
+  remarks     String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  
+  project    Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy  User            @relation("ReportCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  photos     ReportPhoto[]
+}
+
+model ReportPhoto {
+  id           String    @id @default(cuid())
+  dailyReportId String   @map("daily_report_id")
+  url          String
+  caption      String?
+  sortOrder    Int       @default(0) @map("sort_order")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  
+  dailyReport DailyReport @relation(fields: [dailyReportId], references: [id], onDelete: Cascade)
+  
+  @@map("report_photos")
+}
+
+model RABill {
+  id          String     @id @default(cuid())
+  projectId   String     @map("project_id")
+  contractId  String     @map("contract_id")
+  billNo      String     @map("bill_no")
+  periodFrom  DateTime   @map("period_from") @db.Date
+  periodTo    DateTime   @map("period_to") @db.Date
+  totalAmount Decimal?   @map("total_amount") @db.Decimal(15, 2)
+  status      BillStatus @default(DRAFT)
+  submittedAt DateTime?  @map("submitted_at")
+  approvedAt  DateTime?  @map("approved_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  contract  Contract   @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  items     BillItem[]
+  payments  Payment[]
+}
+
+model BillItem {
+  id          String    @id @default(cuid())
+  raBillId    String    @map("ra_bill_id")
+  boqRef      String    @map("boq_ref")
+  description String    @db.Text
+  quantity    Decimal   @db.Decimal(15, 4)
+  unit        String
+  rate        Decimal   @db.Decimal(15, 2)
+  amount      Decimal   @db.Decimal(15, 2)
+  previousQty Decimal?  @map("previous_qty") @db.Decimal(15, 4)
+  currentQty  Decimal?  @map("current_qty") @db.Decimal(15, 4)
+  sortOrder   Int       @default(0) @map("sort_order")
+  
+  raBill RABill @relation(fields: [raBillId], references: [id], onDelete: Cascade)
+  
+  @@map("bill_items")
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  raBillId    String?       @map("ra_bill_id")
+  amount      Decimal       @db.Decimal(15, 2)
+  paymentDate DateTime      @map("payment_date") @db.Date
+  referenceNo String?       @map("reference_no")
+  status      PaymentStatus @default(PENDING)
+  notes       String?       @db.Text
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  
+  raBill RABill? @relation(fields: [raBillId], references: [id], onDelete: SetNull)
+}
+
+model Variation {
+  id          String          @id @default(cuid())
+  projectId   String          @map("project_id")
+  contractId  String          @map("contract_id")
+  approvedById String?        @map("approved_by_id")
+  refNo       String          @map("ref_no")
+  title       String
+  description String          @db.Text
+  amount      Decimal         @db.Decimal(15, 2)
+  status      VariationStatus @default(PENDING)
+  approvedAt  DateTime?       @map("approved_at")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  contract   Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  approvedBy User?    @relation("VariationApprover", fields: [approvedById], references: [id], onDelete: SetNull)
+}
+
+model Document {
+  id          String    @id @default(cuid())
+  projectId   String    @map("project_id")
+  title       String
+  category    String?
+  fileUrl     String    @map("file_url")
+  fileName    String    @map("file_name")
+  fileSize    Int?      @map("file_size")
+  mimeType    String?   @map("mime_type")
+  version     Int       @default(1)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String           @map("user_id")
+  type      NotificationType @default(INFO)
+  title     String
+  message   String           @db.Text
+  link      String?
+  isRead    Boolean          @default(false) @map("is_read")
+  createdAt DateTime         @default(now()) @map("created_at")
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("notifications")
+}

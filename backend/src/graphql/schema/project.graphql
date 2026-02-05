@@ -1,0 +1,48 @@
+type Project {
+  id: ID!
+  name: String!
+  code: String!
+  description: String
+  location: String
+  startDate: DateTime
+  endDate: DateTime
+  budget: Decimal
+  status: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  contracts: [Contract!]
+  dailyReports: [DailyReport!]
+  raBills: [RABill!]
+  milestones: [Milestone!]
+}
+
+input CreateProjectInput {
+  name: String!
+  code: String!
+  description: String
+  location: String
+  startDate: DateTime
+  endDate: DateTime
+  budget: Decimal
+}
+
+input UpdateProjectInput {
+  name: String
+  description: String
+  location: String
+  startDate: DateTime
+  endDate: DateTime
+  budget: Decimal
+  status: String
+}
+
+extend type Query {
+  projects(search: String, status: String): [Project!]!
+  project(id: ID!): Project
+}
+
+extend type Mutation {
+  createProject(input: CreateProjectInput!): Project!
+  updateProject(id: ID!, input: UpdateProjectInput!): Project!
+  deleteProject(id: ID!): Project!
+}

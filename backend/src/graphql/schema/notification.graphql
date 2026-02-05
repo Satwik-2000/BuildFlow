@@ -1,0 +1,25 @@
+enum NotificationType {
+  INFO
+  WARNING
+  ALERT
+  SUCCESS
+}
+
+type Notification {
+  id: ID!
+  type: NotificationType!
+  title: String!
+  message: String!
+  link: String
+  isRead: Boolean!
+  createdAt: DateTime!
+}
+
+extend type Query {
+  notifications(unreadOnly: Boolean): [Notification!]!
+}
+
+extend type Mutation {
+  markNotificationRead(id: ID!): Notification!
+  markAllNotificationsRead: Boolean!
+}

@@ -1,0 +1,61 @@
+type ReportPhoto {
+  id: ID!
+  url: String!
+  caption: String
+  sortOrder: Int!
+}
+
+type DailyReport {
+  id: ID!
+  projectId: ID!
+  createdById: ID!
+  reportDate: DateTime!
+  weather: String
+  workDone: String!
+  manpower: Int
+  equipment: String
+  issues: String
+  remarks: String
+  photos: [ReportPhoto!]!
+  project: Project!
+  createdAt: DateTime!
+}
+
+input CreateDailyReportInput {
+  projectId: ID!
+  reportDate: DateTime!
+  weather: String
+  workDone: String!
+  manpower: Int
+  equipment: String
+  issues: String
+  remarks: String
+}
+
+input UpdateDailyReportInput {
+  weather: String
+  workDone: String
+  manpower: Int
+  equipment: String
+  issues: String
+  remarks: String
+}
+
+input AddReportPhotoInput {
+  dailyReportId: ID!
+  url: String!
+  caption: String
+}
+
+extend type Query {
+  dailyReports(projectId: ID!, from: DateTime, to: DateTime): [DailyReport!]!
+  dailyReport(id: ID!): DailyReport
+}
+
+extend type Mutation {
+  createDailyReport(input: CreateDailyReportInput!): DailyReport!
+  updateDailyReport(id: ID!, input: UpdateDailyReportInput!): DailyReport!
+  deleteDailyReport(id: ID!): DailyReport!
+  addReportPhoto(input: AddReportPhotoInput!): ReportPhoto!
+  removeReportPhoto(id: ID!): ReportPhoto!
+}
